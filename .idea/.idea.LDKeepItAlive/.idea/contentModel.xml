@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\code\LDKeepItAlive" t="IncludeRecursive">
+      <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Editor" t="Include">
+          <e p="EditorFunctions.cs" t="Include" />
+        </e>
+        <e p="Scripts" t="Include">
+          <e p="Computer.cs" t="Include" />
+          <e p="ComputerParts.cs" t="Include" />
+          <e p="Door.cs" t="Include" />
+          <e p="ElevatorController.cs" t="Include" />
+          <e p="EnemyController.cs" t="Include" />
+          <e p="IInteractable.cs" t="Include" />
+          <e p="Item.cs" t="Include" />
+          <e p="Key.cs" t="Include" />
+          <e p="LightSwitch.cs" t="Include" />
+          <e p="PlayerController.cs" t="Include" />
+          <e p="Sofa.cs" t="Include" />
+        </e>
+      </e>
+      <e p="LDKeepItAlive.sln" t="IncludeFlat" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="Temp\bin" t="ExcludeRecursive" />
+    </e>
+    <e p="C:\Users\Deividas\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Deividas\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_LDKeepItAlive.-1494622056.00" t="ExcludeRecursive" />
+  </component>
+</project>
