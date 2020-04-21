@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Computer : MonoBehaviour, IInteractable
 {
+    public enum Owner
+    {
+        None,
+        Delegator,
+        Manager
+    }
 
+    public Owner ownedBy = Owner.None;
     public bool requiresPart;
     public bool isWorking;
     public Sprite working;
@@ -18,24 +26,48 @@ public class Computer : MonoBehaviour, IInteractable
         _renderer = GetComponent<SpriteRenderer>();
         _collider2D = GetComponent<BoxCollider2D>();
         
-        ComputerRepaired(isWorking);
+        //ComputerRepaired(isWorking);
+        if (isWorking)
+        {
+            _renderer.sprite = isWorking ? working : notWorking;
+            _collider2D.enabled = false;
+            this.enabled = false;
+        }
+        else
+        {
+            ComputerRepaired(false, ownedBy, requiresPart);
+        }
     }
 
-    public void ComputerRepaired(bool value)
+    public void ComputerRepaired(bool value, Owner owner, bool reqPart)
     {
         isWorking = value;
+        ownedBy = owner;
+        requiresPart = reqPart;
         _renderer.sprite = value ? working : notWorking;
         _collider2D.enabled = !value;
+        
+        // TODO: send owner type
+        if (value)
+        {
+            GameManager.Instance?.ComputerFix(owner);
+        }
+        else
+        {
+            GameManager.Instance?.ComputerBroke(owner);
+        }
+        
         this.enabled = !value;
     }
 
     public void Interact(GameObject obj)
     {
-        Debug.Log("Computer triggered");
+        //Debug.Log("Computer triggered");
         if (!requiresPart)
         {
             // TODO: interaction start for player
-            ComputerRepaired(true);
+            ComputerRepaired(true, ownedBy, requiresPart);
+            AudioManager.Instance.Play("fixed");
             return;
         }
         else
@@ -47,20 +79,14 @@ public class Computer : MonoBehaviour, IInteractable
                 {
                     if (item is ComputerPart)
                     {
-                        /*
-                         * change to working sprite
-                         * disable collider
-                         * remove item from player
-                         * turn off component
-                         * start interaction
-                         */
-                        
                         player.RemoveItem(item);
-                        ComputerRepaired(true);
-
+                        ComputerRepaired(true, ownedBy, true);
+                        AudioManager.Instance.Play("fixed");
                         return;
                     }
                 }
+                AudioManager.Instance.Play("partReq");
+                MenuManager.Instance.UpdatePlayerSpeakBox(TextManager.Instance.GetRequiresPart());
             }
         }
     }

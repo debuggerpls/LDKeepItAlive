@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
     <e p="C:\code\LDKeepItAlive" t="IncludeRecursive">
@@ -9,6 +9,8 @@
           <e p="EditorFunctions.cs" t="Include" />
         </e>
         <e p="Scripts" t="Include">
+          <e p="AudioManager.cs" t="Include" />
+          <e p="BodyFlipper.cs" t="Include" />
           <e p="Computer.cs" t="Include" />
           <e p="ComputerParts.cs" t="Include" />
           <e p="Door.cs" t="Include" />
@@ -17,12 +19,14 @@
           <e p="GameManager.cs" t="Include" />
           <e p="IInteractable.cs" t="Include" />
           <e p="Item.cs" t="Include" />
+          <e p="ItemGui.cs" t="Include" />
           <e p="Key.cs" t="Include" />
           <e p="LightSwitch.cs" t="Include" />
           <e p="MenuManager.cs" t="Include" />
           <e p="PlayerController.cs" t="Include" />
           <e p="Singleton.cs" t="Include" />
           <e p="Sofa.cs" t="Include" />
+          <e p="TextManager.cs" t="Include" />
         </e>
       </e>
       <e p="LDKeepItAlive.sln" t="IncludeFlat" />

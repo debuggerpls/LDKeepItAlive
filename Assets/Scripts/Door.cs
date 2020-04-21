@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class Door : MonoBehaviour, IInteractable
 {
+    public SpriteRenderer knobRenderer;
     public Key requiredKey;
     private int _requiredKeyNr;
-    
+    private Color _color;
+
     private BoxCollider2D[] _colliders;
     
 
@@ -14,11 +16,14 @@ public class Door : MonoBehaviour, IInteractable
         _colliders = GetComponents<BoxCollider2D>();
         _requiredKeyNr = gameObject.GetHashCode();
         requiredKey.keyNr = _requiredKeyNr;
+        _color = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        requiredKey.color = _color;
+        requiredKey.SetColor(_color);
+        knobRenderer.color = _color;
     }
 
     public void Interact(GameObject obj)
     {
-        //Debug.Log("Door trigger");
         var player = obj.GetComponent<PlayerController>();
         if (player != null)
         {
@@ -29,19 +34,19 @@ public class Door : MonoBehaviour, IInteractable
                     int keyNr = ((KeyItem) item).keyNr;
                     if (keyNr == _requiredKeyNr)
                     {
-                        /*
-                         * change to open sprite
-                         * disable colliders
-                         * remove item from player
-                         */
                         DisableColliders();
                         player.RemoveItem(item);
-                        //player.items.Remove(item);
+                        MenuManager.Instance.UpdatePlayerSpeakBox(TextManager.Instance.GetDoorOpenedString());
+                        AudioManager.Instance.Play("unlocked");
                         this.enabled = false;
+                        Destroy(gameObject);
                         return;
                     }
                 }
             }
+        
+            MenuManager.Instance.UpdatePlayerSpeakBox(TextManager.Instance.GetDoorLockedString());
+            AudioManager.Instance.Play("locked");
         }
 
     }

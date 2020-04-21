@@ -10,7 +10,7 @@ public class EnemyController : MonoBehaviour
     public float wastedTime = 2f;
     public bool playerInSight;
     public float reachDistance = 0.6f;
-    
+
 
     public Transform leftWaypoint;
     public Transform rightWaypoint;
@@ -24,7 +24,13 @@ public class EnemyController : MonoBehaviour
     private Vector3 _currentDestination;
     private Vector3 _leftPos;
     private Vector3 _rightPos;
-    
+
+    private Transform _player;
+    private bool _hottieHasHim = false;
+
+    public Computer enemysComputer;
+    public bool enemysComputerRequiresPart;
+
 
     private void Start()
     {
@@ -42,6 +48,8 @@ public class EnemyController : MonoBehaviour
         _mask = LayerMask.GetMask("Player") ;
         _rigidbody = GetComponent<Rigidbody2D>();
         _currentSpeed = moveSpeed;
+
+        _player = GameObject.FindWithTag("Player").transform;
     }
 
     private void FixedUpdate()
@@ -57,13 +65,6 @@ public class EnemyController : MonoBehaviour
             
             if ((_currentDestination - transform.position).sqrMagnitude <= 0.3f && !playerInSight)
             {
-                /*
-                 * destination reached:
-                 * turn around
-                 * change dir and destination
-                 * TODO: maybe stay in place for a while?
-                 */
-            
                 movingDir *= -1f;
                 _currentDestination = movingDir > 0 ? _rightPos : _leftPos;
             }
@@ -71,7 +72,7 @@ public class EnemyController : MonoBehaviour
         
         float distance = movingDir * visionDistance;
         RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, distance, _mask);
-        if (hit.collider != null)
+        if (hit.collider != null && enemyType != EnemyType.Hottie)
         {
             //Debug.Log("hit: " + hit.collider.tag);
             if (!playerInSight)
@@ -87,7 +88,59 @@ public class EnemyController : MonoBehaviour
             if (Mathf.Abs(hit.point.x - transform.position.x) <= reachDistance)
             {
                 // call event
-                Debug.Log("player in reach");
+                //Debug.Log("player in reach");
+                // TODO: change to gamemanager call? or what?
+                
+                MenuManager.Instance.UpdateEnemySpeakBox(
+                    enemyType == EnemyType.Delegator? TextManager.Instance.GetDelegatorText() 
+                    : TextManager.Instance.GetBossText(),
+                    enemyType);
+                MenuManager.Instance.UpdatePlayerSpeakBox(
+                    enemyType == EnemyType.Delegator ? TextManager.Instance.GetDelegatorProblem()
+                    : TextManager.Instance.GetBossProblem());
+
+                if (enemyType == EnemyType.Manager)
+                {
+                    GameManager.Instance.PlayerCaughtByManager();
+                }
+
+                if (enemyType == EnemyType.Delegator)
+                {
+                    if (enemysComputer != null)
+                    {
+                        enemysComputer.ComputerRepaired(false, Computer.Owner.Delegator, enemysComputerRequiresPart);
+                        AudioManager.Instance.Play("broken");
+                    }
+                    GameManager.Instance.PlayerCaughtByDelegator(wastedTime);
+                }
+                
+                
+                Destroy(gameObject);
+            }
+        }
+        else if (enemyType == EnemyType.Hottie)
+        {
+            if (Mathf.Abs(_player.transform.position.x - transform.position.x) <= visionDistance && 
+                Mathf.Abs(_player.transform.position.y - transform.position.y) <= 1f)
+            {
+                if (!_hottieHasHim)
+                {
+                    _player.GetComponent<PlayerController>().movementSpeed *= 0.5f;
+                    _hottieHasHim = true;
+                    // call event
+                    MenuManager.Instance.UpdateEnemySpeakBox(TextManager.Instance.GetHottieText(), enemyType);
+                    MenuManager.Instance.UpdatePlayerSpeakBox(TextManager.Instance.GetHottieProblem());
+                }
+            }
+            else
+            {
+                if (_hottieHasHim)
+                {
+                    _player.GetComponent<PlayerController>().movementSpeed *= 2f;
+                    _hottieHasHim = false;
+                    // call event ? not sure yet
+                    
+                }
             }
         }
         else
@@ -142,6 +195,12 @@ public class EnemyController : MonoBehaviour
         {
             Gizmos.DrawLine(transform.position, rightWaypoint.position);
             Gizmos.DrawWireSphere(rightWaypoint.position, 0.1f);
+        }
+
+        Gizmos.color = Color.white;
+        if (enemyType == EnemyType.Delegator && enemysComputer != null)
+        {
+            Gizmos.DrawLine(transform.position, enemysComputer.transform.position);
         }
     }
 

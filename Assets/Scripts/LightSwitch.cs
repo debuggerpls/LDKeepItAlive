@@ -7,8 +7,8 @@ using UnityEngine.Experimental.Rendering.Universal;
 public class LightSwitch : MonoBehaviour, IInteractable
 {
     public bool lightsOn;
-    public Sprite spriteOn;
-    public Sprite spriteOff;
+    public Color onColor = Color.white;
+    public Color offColor = Color.red;
 
     public Light2D[] lights;
 
@@ -17,7 +17,7 @@ public class LightSwitch : MonoBehaviour, IInteractable
     private void Awake()
     {
         _renderer = GetComponent<SpriteRenderer>();
-        _renderer.sprite = lightsOn ? spriteOn : spriteOff;
+        _renderer.color = lightsOn ? onColor : offColor;
             
         foreach (var light in lights)
         {
@@ -29,12 +29,14 @@ public class LightSwitch : MonoBehaviour, IInteractable
     public void Interact(GameObject obj)
     {
         lightsOn = !lightsOn;
-        _renderer.sprite = lightsOn ? spriteOn : spriteOff;
+        _renderer.color = lightsOn ? onColor : offColor;
 
         foreach (var light in lights)
         {
             light.enabled = lightsOn;
         }
+
+        AudioManager.Instance.Play("light");
     }
 
     private void OnDrawGizmosSelected()

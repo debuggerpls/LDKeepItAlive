@@ -37,6 +37,7 @@ public class ElevatorController : MonoBehaviour, IInteractable
             destination.SetDestination(this);
             _busyTime = floorsToDestination * busyTimePerFloor;
             destination.BusyTime = _busyTime;
+            _renderer.sprite = spriteReady;
         }
     }
 
@@ -73,6 +74,8 @@ public class ElevatorController : MonoBehaviour, IInteractable
 
     public void Interact(GameObject obj)
     {
+        AudioManager.Instance.Play("elevator");
+        
         if (state == ElevatorState.Ready)
         {
             Debug.Log("Ready called");

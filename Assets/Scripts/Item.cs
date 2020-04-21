@@ -5,4 +5,5 @@ using UnityEngine;
 public class Item
 {
    public Sprite sprite;
+   public Color color;
 }
